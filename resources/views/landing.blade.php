@@ -271,7 +271,6 @@
       <div class="columns is-centered mt-5">
         <div class="column is-half">
           <div class="buttons is-centered are-medium mb-5">
-            <a class="button is-dark" href="mailto:gamer@example.com">Email</a>
             <a class="button is-info" href="#">Discord</a>
             <a class="button is-dark" href="#">Steam</a>
             <a class="button is-black" href="#">Twitch</a>
