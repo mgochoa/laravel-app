@@ -43,8 +43,19 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             cd /var/www/example-app
+
+            # Sync Nginx config if it exists in the deploy
+            if [ -f deploy/nginx.conf ]; then
+              cp deploy/nginx.conf /etc/nginx/sites-available/laravel.carocholab.com
+              ln -sf /etc/nginx/sites-available/laravel.carocholab.com /etc/nginx/sites-enabled/laravel.carocholab.com
+              nginx -t && systemctl reload nginx
+            fi
+
+            # Fix permissions
+            chown -R www-data:www-data storage bootstrap/cache database
+            chmod -R 775 storage bootstrap/cache database
+
             php artisan down --retry=60
-            git pull origin main
             php artisan migrate --force
             php artisan config:cache
             php artisan event:cache
