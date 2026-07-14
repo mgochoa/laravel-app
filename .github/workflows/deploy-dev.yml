@@ -60,7 +60,7 @@ jobs:
               cp .env.example .env
               php artisan key:generate
               sed -i "s|APP_URL=.*|APP_URL=https://laravel-dev.carocholab.com|" .env
-              sed -i "s|APP_NAME=.*|APP_NAME=GamerTag (Dev)|" .env
+              sed -i 's|APP_NAME=.*|APP_NAME="GamerTag (Dev)"|' .env
               sed -i "s|APP_DEBUG=.*|APP_DEBUG=true|" .env
               sed -i "s|APP_ENV=.*|APP_ENV=local|" .env
             fi
