@@ -57,21 +57,28 @@ make ssh
 
 Requires `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` in `.env`.
 
-### Deploy pipeline
+### Deploy pipelines
 
-On every push to `master`, GitHub Actions will:
+| Branch | Environment | URL | Directory |
+|--------|------------|-----|-----------|
+| `master` | Production | `https://laravel.carocholab.com` | `/var/www/example-app` |
+| `dev` | Development | `https://laravel-dev.carocholab.com` | `/var/www/example-app-dev` |
+
+On every push, GitHub Actions will:
 1. Install PHP deps & build frontend assets
-2. RSync the code to `/var/www/example-app`
-3. Apply Nginx config from `deploy/nginx.conf`
+2. RSync the code to the respective directory
+3. Apply Nginx config from `deploy/`
 4. Fix storage permissions
-5. Run `migrate`, `config:cache`, `route:cache`, `view:cache`
+5. Run `migrate`, caches, etc.
 6. Bring the site back up
 
 ### Files
 
 | File | Purpose |
 |------|---------|
-| `deploy/nginx.conf` | Nginx site config (versioned) |
+| `deploy/nginx.conf` | Production Nginx config |
+| `deploy/nginx-dev.conf` | Dev Nginx config |
 | `deploy/provision-server.sh` | Full server setup from bare OS (run once) |
 | `deploy/provision.sh` | Post-deploy tasks (permissions, caches) |
-| `.github/workflows/deploy.yml` | CI/CD pipeline |
+| `.github/workflows/deploy.yml` | Production CI/CD (master branch) |
+| `.github/workflows/deploy-dev.yml` | Dev CI/CD (dev branch) |

@@ -1,0 +1,75 @@
+name: Deploy Dev (Linode)
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: mbstring, pdo_sqlite, bcmath, gd, zip
+          tools: composer:v2
+
+      - name: Install PHP dependencies
+        run: composer install --optimize-autoloader
+
+      - name: Build frontend assets
+        run: |
+          npm ci --ignore-scripts
+          npm run build
+
+      - name: Deploy via RSync
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete --exclude=.env --exclude=.git --exclude=node_modules --exclude=tests --exclude=.github --exclude=database/database.sqlite
+          remote_path: /var/www/example-app-dev
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Run remote deployment commands
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd /var/www/example-app-dev
+
+            # Sync Nginx config
+            if [ -f deploy/nginx-dev.conf ]; then
+              cp deploy/nginx-dev.conf /etc/nginx/sites-available/laravel-dev.carocholab.com
+              ln -sf /etc/nginx/sites-available/laravel-dev.carocholab.com /etc/nginx/sites-enabled/
+              nginx -t && systemctl reload nginx
+            fi
+
+            # Fix permissions
+            chown -R www-data:www-data storage bootstrap/cache database
+            chmod -R 775 storage bootstrap/cache database
+
+            # Create .env from example if not exists
+            if [ ! -f .env ]; then
+              cp .env.example .env
+              php artisan key:generate
+              sed -i "s|APP_URL=.*|APP_URL=https://laravel-dev.carocholab.com|" .env
+              sed -i "s|APP_NAME=.*|APP_NAME=GamerTag (Dev)|" .env
+              sed -i "s|APP_DEBUG=.*|APP_DEBUG=true|" .env
+              sed -i "s|APP_ENV=.*|APP_ENV=local|" .env
+            fi
+
+            php artisan down --retry=60
+            php artisan migrate --force
+            chown -R www-data:www-data storage bootstrap/cache database
+            chmod -R 775 storage bootstrap/cache database
+            php artisan config:clear
+            php artisan route:clear
+            php artisan view:clear
+            php artisan up
