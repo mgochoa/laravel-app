@@ -9,4 +9,3 @@ Route::get('/', function () {
 Route::get('/landing', function () {
     return view('landing');
 });
-

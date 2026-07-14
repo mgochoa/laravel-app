@@ -327,6 +327,9 @@
   <footer class="footer has-background-dark has-text-white">
     <div class="content has-text-centered">
       <p>&copy; {{ date('Y') }} {{ config('app.name', 'GamerTag') }}. No rage quits.</p>
+      @if (commit_hash())
+        <p class="is-size-7 mt-1 has-text-grey-light">dev {{ commit_hash() }}</p>
+      @endif
     </div>
   </footer>
 

@@ -65,6 +65,9 @@ jobs:
               sed -i "s|APP_ENV=.*|APP_ENV=local|" .env
             fi
 
+            # Write commit hash for dev footer
+            echo "${{ github.sha }}" > storage/app/commit.txt
+
             php artisan down --retry=60
             php artisan migrate --force
             chown -R www-data:www-data storage bootstrap/cache database
