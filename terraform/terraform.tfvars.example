@@ -1,0 +1,23 @@
+# ─── Linode ───────────────────────────────────────────────────────────────────
+# Generate at: https://cloud.linode.com/profile/tokens
+linode_token        = "your-linode-personal-access-token"
+
+# Root password for the VM. Generate a strong one.
+linode_root_password = "your-secure-root-password"
+
+# Your public SSH key so you can log in as root
+ssh_public_key      = "ssh-ed25519 AAAA... your-key-comment"
+
+# ─── Cloudflare ───────────────────────────────────────────────────────────────
+# Generate at: https://dash.cloudflare.com/profile/api-tokens
+# Permissions needed: Zone:DNS (Edit), Zone:SSL (Edit), Zone:Zone (Read)
+cloudflare_api_token = "your-cloudflare-api-token"
+
+# Find at: https://dash.cloudflare.com → right sidebar → Account ID
+cloudflare_account_id = "your-cloudflare-account-id"
+
+# ─── Domain ───────────────────────────────────────────────────────────────────
+# These are the defaults — override if your domain/subdomains differ
+# domain          = "carocholab.com"
+# prod_subdomain  = "laravel"
+# dev_subdomain   = "laravel-dev"

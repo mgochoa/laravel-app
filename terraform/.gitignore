@@ -1,0 +1,18 @@
+# Local variables (contains secrets)
+terraform.tfvars
+*.tfvars
+
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+*.tfstate.*
+
+# Terraform CLI directory
+.terraform/
+
+# Generated certificate files (contains private keys)
+.certs/
+
+# Crash log files
+crash.log
+crash.*.log

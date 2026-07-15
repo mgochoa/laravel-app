@@ -26,3 +26,10 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Terraform
+/terraform/.terraform/
+/terraform/*.tfvars
+/terraform/.certs/
+/terraform/*.tfstate
+/terraform/*.tfstate.*
